@@ -10,21 +10,30 @@ const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rho
 
 const app = express();
 
+let posts = [];
+
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
-  res.render("home", {homeStart: homeStartingContent});
+  res.render("home", {
+    homeStart: homeStartingContent,
+    posts: posts}
+    );
 });
 
 app.get("/about", (req,res) => {
-  res.render("about", {aboutContent: aboutContent});
+  res.render("about", {
+    aboutContent: aboutContent}
+    );
 });
 
 app.get("/contact", (req, res) => {
-  res.render("contact", {contactContent: contactContent});
+  res.render("contact", {
+    contactContent: contactContent}
+    );
 });
 
 app.get("/compose", (req, res) => {
@@ -32,11 +41,26 @@ app.get("/compose", (req, res) => {
 });
 
 app.post("/compose", (req, res) => {
-  let title = req.body.postTitle;
-  //console.log(req.body.postTitle);
+  const post = {
+    title: req.body.postTitle,
+    content: req.body.postBody
+  };
+
+  posts.push(post);
+  res.redirect("/")
 });
 
+app.get("/posts/:postName", (req, res) => {
+  let requestedTitle = req.params.postName;
 
+  posts.forEach( (post) => {
+    let storedTitle = post.title;
+
+    if (storedTitle === requestedTitle) {
+      console.log("Match Found");
+    }    
+  });
+});
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
